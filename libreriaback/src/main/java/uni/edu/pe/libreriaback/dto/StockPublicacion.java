@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Tipo {
-    private String idtipo;
-    private String descripcion;
-    private int contador;
+public class StockPublicacion {
+    private String idPublicacion;
+    private int cantidad;
 }
