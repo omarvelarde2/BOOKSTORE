@@ -179,7 +179,7 @@ public class RegistrarVentaService {
             st.executeUpdate();
             st.close();
             cerrarConexion(null, st);
-            // Se calculan el descuento, impuesto y totales de la venta
+            // Se calculan el descuento, impuesto y totales de la nueva venta
             calcularDescuento();
             calcularVenta();
         }catch(SQLException e){
@@ -204,6 +204,7 @@ public class RegistrarVentaService {
         return "Se ha hecho COMMIT de las ultimas transacciones correctamente";
     }
 
+    //-----------------------------------------------------------------------------
     // Método para obtener conexión con la base de datos usando jdbc template
     private void obtenerConexion(){
         try {
