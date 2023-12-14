@@ -66,13 +66,13 @@ public class RegistrarVentaService {
     public String calcularVenta() {
         try {
             obtenerConexion();
-            String sql = "UPDATE dbo.venta\n" +
+            String sql = "UPDATE dbo.VENTA\n" +
                     "SET total = cantidad * (precio - dcto);\n" +
                     "\n" +
-                    "UPDATE dbo.venta\n" +
+                    "UPDATE dbo.VENTA\n" +
                     "SET subtotal = total / 1.18;\n" +
                     "\n" +
-                    "UPDATE dbo.venta\n" +
+                    "UPDATE dbo.VENTA\n" +
                     "SET impuesto = total - subtotal;";
             Statement st = conexion.createStatement();
             st.executeUpdate(sql);
