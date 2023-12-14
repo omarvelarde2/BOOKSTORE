@@ -85,7 +85,7 @@ public class RegistrarVentaService {
 
     // Item 4 (Se debe validar que exista stock suficiente):
     public boolean validarStock(StockPublicacion stockPublicacion){
-        // Recibe el idPublicacion y la cantidad de venta (revisar el DTO)
+        // Recibe el idpublicacion y la cantidad de venta (revisar el DTO)
         try {
             obtenerConexion();
             // Consulta para el stock de la publicacion
@@ -93,11 +93,11 @@ public class RegistrarVentaService {
                     "FROM dbo.PUBLICACION\n" +
                     "WHERE idpublicacion = ?;";
             PreparedStatement st = conexion.prepareStatement(sql);
-            st.setString(1, stockPublicacion.getIdPublicacion());
+            st.setString(1, stockPublicacion.getIdpublicacion());
             ResultSet rs = st.executeQuery();
-            st.close();
             // Si el resultado (stock) es mayor o igual a la cantidad, se valida
             boolean valido = rs.next() && rs.getInt("stock") >= stockPublicacion.getCantidad();
+            st.close();
             cerrarConexion(rs, st);
             return valido;
         } catch (SQLException e) {
@@ -109,13 +109,17 @@ public class RegistrarVentaService {
     public String actualizarStock(StockPublicacion stockPublicacion){
         // Nuevamente recibe el idPublicacion y la cantidad de venta (StockPublicacion)
         try {
+            // Validar que el stock sea suficiente
+            if (!validarStock(stockPublicacion)) {
+                throw new RuntimeException("Stock insuficiente");
+            }
             obtenerConexion();
             String sql = "UPDATE dbo.PUBLICACION\n" +
                     "SET stock = stock - ?\n" +
                     "WHERE idpublicacion = ?;";
             PreparedStatement st = conexion.prepareStatement(sql);
             st.setInt(1, stockPublicacion.getCantidad());
-            st.setString(2, stockPublicacion.getIdPublicacion());
+            st.setString(2, stockPublicacion.getIdpublicacion());
 
             st.executeUpdate();
             st.close();
@@ -123,7 +127,7 @@ public class RegistrarVentaService {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return "Stock de " + stockPublicacion.getIdPublicacion() + " actualizado correctamente";
+        return "Stock de " + stockPublicacion.getIdpublicacion() + " actualizado correctamente";
     }
 
     // Item 6 (Debe generar el IDVENTA de manera correcta):
@@ -152,14 +156,21 @@ public class RegistrarVentaService {
     public Venta registrarVenta(Venta venta){
         // Recibe una venta (revisar el DTO)
         try{
+            // Validar que idpublicacion exista
+            if (!validarIdpublicacion(venta.getIdpublicacion())) {
+                throw new RuntimeException("ID de publicación no válido");
+            }
+            // Actualizar el stock de la publicacion (viene incluido lo de validar stock)
+            StockPublicacion sp = new StockPublicacion(venta.getIdpublicacion(), venta.getCantidad());
+            actualizarStock(sp);
+            // Se genera un id nuevo para la venta
+            int idventa = generarIdventa();
             obtenerConexion();
             String sql = "INSERT INTO dbo.VENTA \n" +
                     "    (idventa, cliente, idempleado, fecha, idpublicacion, cantidad, precio, dcto, subtotal, impuesto, total) \n" +
                     "VALUES (?, ?, ?, GETDATE(), ?, ?, 0, 0, 0, 0, 0);";
             PreparedStatement st = conexion.prepareStatement(sql);
-            // Se genera un id nuevo para la venta
-            st.setInt(1, generarIdventa());
-            // El resto se ingresa manualmente
+            st.setInt(1, idventa);
             st.setString(2, venta.getCliente());
             st.setInt(3, venta.getIdempleado());
             st.setString(4, venta.getIdpublicacion());

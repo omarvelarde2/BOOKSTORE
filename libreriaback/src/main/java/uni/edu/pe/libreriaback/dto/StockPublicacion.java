@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class StockPublicacion {
-    private String idPublicacion;
+    private String idpublicacion;
     private int cantidad;
 }
