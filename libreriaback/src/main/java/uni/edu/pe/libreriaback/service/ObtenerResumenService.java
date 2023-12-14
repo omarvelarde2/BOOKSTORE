@@ -45,6 +45,8 @@ public class ObtenerResumenService {
         }
         return list;
     }
+
+    //---------------------------------------------------------------------------------
     // Método para extraer un único reporte de resumen
     private ReporteResumen extractReport(ResultSet resultado) throws SQLException {
         ReporteResumen report = new ReporteResumen(
