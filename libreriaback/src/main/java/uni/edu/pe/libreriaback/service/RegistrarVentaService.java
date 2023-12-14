@@ -179,13 +179,30 @@ public class RegistrarVentaService {
             st.executeUpdate();
             st.close();
             cerrarConexion(null, st);
+            // Se calculan el descuento, impuesto y totales de la venta
+            calcularDescuento();
+            calcularVenta();
         }catch(SQLException e){
             throw new RuntimeException(e);
         }
         return venta;
     }
 
-    // Item 8 ():
+    // Item 8 (Gestionar la transacción de manera correcta):
+    public String gestionarTransaccion(){
+        try {
+            obtenerConexion();
+            String sql = "UPDATE dbo.CONTROL\n" +
+                    "SET valor = (SELECT COUNT(*) FROM dbo.VENTA)\n" +
+                    "WHERE parametro = 'VENTA';";
+            Statement st = conexion.createStatement();
+            st.executeUpdate(sql);
+            cerrarConexion(null, st);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return "Se ha hecho COMMIT de las ultimas transacciones correctamente";
+    }
 
     // Método para obtener conexión con la base de datos usando jdbc template
     private void obtenerConexion(){

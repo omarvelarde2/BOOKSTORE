@@ -46,4 +46,9 @@ public class RegistrarVentaController {
     public Venta registrarVenta(@RequestBody Venta venta) {
         return registrarVentaService.registrarVenta(venta);
     }
+
+    @PostMapping("/gestionarTransaccion")
+    public String gestionarTransaccion() {
+        return registrarVentaService.gestionarTransaccion();
+    }
 }

@@ -30,7 +30,7 @@ public class ObtenerResumenService {
                 "INNER JOIN\n" +
                 "    dbo.VENTA v ON p.idpublicacion = v.idpublicacion\n" +
                 "GROUP BY\n" +
-                "    t.idtipo, t.descripcion, t.contador;\n";
+                "    t.idtipo, t.descripcion, t.contador;";
         try {
             obtenerConexion();
             Statement sentencia = conexion.createStatement();
